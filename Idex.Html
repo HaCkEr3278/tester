@@ -3,89 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Class - Proxy</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        #searchForm, #hideUrlButton {
-            margin-top: 20px;
-        }
-        #searchInput {
-            width: 70%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        #searchButton, #hideUrlButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Node.js Server with Ultraviolet</title>
 </head>
 <body>
-    <h1>Art Class Proxy</h1>
+    <h1>Node.js Server with Ultraviolet</h1>
     
-    <form id="searchForm">
-        <input type="text" id="searchInput" placeholder="Enter URL or search term">
-        <button type="button" id="searchButton" onclick="search()">Search</button>
-    </form>
-    <button id="hideUrlButton" onclick="openIncognito()">Open Incognito Mode</button>
+    <h2>Server Configuration</h2>
+    <ul>
+        <li>Bare Server: Configured at "/bare/" path</li>
+        <li>Express App: Serves static files from "./public/" directory</li>
+        <li>Ultraviolet: Served at "/uv/" path</li>
+        <li>404 Error: Custom 404.html page for unhandled routes</li>
+    </ul>
 
-    <script>
-        // Function to open an incognito-like window with an iframe
-        function openIncognito() {
-            var incognitoTab = window.open('about:blank', '_blank');
-            if (incognitoTab) {
-                // Write the incognito content to the new tab
-                incognitoTab.document.write(`
-                    <html><head><title>Incognito Mode</title>
-                    <script>
-                        // Ensure the page is fully loaded
-                        document.documentElement.innerHTML = '';
-                        // Disable history pushState to block any navigation
-                        Object.defineProperty(window.history, 'pushState', {
-                            value: function() { /* do nothing */ }
-                        });
-                        Object.defineProperty(window.history, 'replaceState', {
-                            value: function() { /* do nothing */ }
-                        });
-                    </script>
-                    </head>
-                    <body style="margin: 0; padding: 0; overflow: hidden;">
-                        <iframe id="proxyFrame" src="about:blank" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe>
-                    </body></html>
-                `);
-            }
-        }
+    <h2>Server Listening</h2>
+    <p>The server listens on:</p>
+    <ul>
+        <li>http://localhost:[PORT]</li>
+        <li>http://[HOSTNAME]:[PORT]</li>
+        <li>http://[IP_ADDRESS]:[PORT]</li>
+    </ul>
 
-        // Function to perform a search or open a URL in an iframe
-        function search() {
-            var searchInput = document.getElementById('searchInput').value;
-            var incognitoTab = window.open('about:blank', '_blank');
-            if (incognitoTab) {
-                // Write the HTML structure with iframe to the new tab
-                incognitoTab.document.write(`
-                    <html>
-                    <head><title>Proxy - Search</title></head>
-                    <body style="margin: 0; padding: 0; overflow: hidden;">
-                        <iframe id="proxyFrame" src="about:blank" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe>
-                    </body>
-                    </html>
-                `);
-
-                // Check if the input is a URL or search query
-                var src = (searchInput.startsWith('http') || searchInput.includes('.')) ? 
-                    searchInput : 
-                    "https://www.google.com/search?q=" + encodeURIComponent(searchInput);
-
-                // Set the iframe's src to the URL or search results
-                incognitoTab.document.getElementById('proxyFrame').src = src;
-            }
-            return false; // Prevent form submission
-        }
-    </script>
-</body>
-</html>
+    <h2>Shutdown Handling</h2>
+    <p>The server ha
