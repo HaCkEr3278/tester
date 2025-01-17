@@ -5,34 +5,49 @@ import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
 import { join } from "node:path";
 import { hostname } from "node:os";
 import { fileURLToPath } from "url";
-import { URLSearchParams } from "url";
 
 const publicPath = fileURLToPath(new URL("./public/", import.meta.url));
 
 const bare = createBareServer("/bare/");
 const app = express();
 
+// Serve static files from the public directory
 app.use(express.static(publicPath));
 app.use("/uv/", express.static(uvPath));
 
-// Custom route to handle search (using query params)
+// Custom route to handle search using query parameters
 app.get("/search", (req, res) => {
-  const query = req.query.q || '';
+  const query = req.query.q || ''; // Get the search query from URL
   if (query) {
-    // Process the search query (you could hook this up to your database or search logic)
-    res.send(`<h1>Search results for: ${query}</h1>`);
+    // Simulate search results (You can hook this up to actual search logic or database)
+    res.send(`
+      <html>
+        <head><title>Search Results</title></head>
+        <body>
+          <h1>Search results for: ${query}</h1>
+          <p>Here are the results for your search query: ${query}</p>
+        </body>
+      </html>
+    `);
   } else {
-    res.send(`<h1>No search query provided</h1>`);
+    res.send(`
+      <html>
+        <head><title>No Search</title></head>
+        <body>
+          <h1>No search query provided</h1>
+        </body>
+      </html>
+    `);
   }
 });
 
-// Error for everything else
+// 404 Error handling for any unmatched routes
 app.use((req, res) => {
-  res.status(404); 
+  res.status(404);
   res.sendFile(join(publicPath, "404.html"));
 });
 
-// About:blank proxy route - handling requests with about:blank URL
+// About:blank proxy route to simulate an "about:blank" iframe
 app.get("/proxy", (req, res) => {
   const blankContent = `
     <html>
@@ -67,7 +82,7 @@ server.on("upgrade", (req, socket, head) => {
 
 let port = parseInt(process.env.PORT || "");
 
-if (isNaN(port)) port = 3000;
+if (isNaN(port)) port = 3000; // Default port
 
 server.on("listening", () => {
   const address = server.address();
@@ -82,7 +97,7 @@ server.on("listening", () => {
   );
 });
 
-// Graceful shutdown
+// Graceful shutdown handling for SIGINT and SIGTERM signals
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 
