@@ -3,26 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Node.js Server with Ultraviolet</title>
+    <title>Open New Tab</title>
 </head>
 <body>
-    <h1>Node.js Server with Ultraviolet</h1>
-    
-    <h2>Server Configuration</h2>
-    <ul>
-        <li>Bare Server: Configured at "/bare/" path</li>
-        <li>Express App: Serves static files from "./public/" directory</li>
-        <li>Ultraviolet: Served at "/uv/" path</li>
-        <li>404 Error: Custom 404.html page for unhandled routes</li>
-    </ul>
+    <h1>Click the button to open a new tab</h1>
+    <button id="openTab">Open New Tab</button>
 
-    <h2>Server Listening</h2>
-    <p>The server listens on:</p>
-    <ul>
-        <li>http://localhost:[PORT]</li>
-        <li>http://[HOSTNAME]:[PORT]</li>
-        <li>http://[IP_ADDRESS]:[PORT]</li>
-    </ul>
-
-    <h2>Shutdown Handling</h2>
-    <p>The server ha
+    <script>
+        document.getElementById('openTab').addEventListener('click', function() {
+            window.open('https://example.com', '_blank');
+        });
+    </script>
+</body>
+</html>
