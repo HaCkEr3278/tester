@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy Page with about:blank Button and Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px;
+      font-size: 2em;
+      font-weight: bold;
+    }
+
+    .search-container {
+      margin: 30px auto;
+      padding: 15px;
+      width: 50%;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1.2em;
+      border: 2px solid #4CAF50;
+      border-radius: 5px;
+    }
+
+    .button-container {
+      margin: 30px;
+    }
+
+    .open-button {
+      padding: 15px 30px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .open-button:hover {
+      background-color: #45a049;
+    }
+
+    iframe {
+      width: 80%;
+      height: 600px;
+      border: none;
+      margin-top: 20px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .search-results {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .search-results li {
+      padding: 10px;
+      background: #e9f7ef;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+
+    .aboutblank {
+      display: none;
+    }
+
+    .show-blank {
+      display: block;
+      background-color: #fff;
+      color: #888;
+      padding: 50px;
+      font-size: 1.5em;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Proxy Page with Search & about:blank</header>
+
+  <!-- Search Section -->
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search for content..." oninput="performSearch()">
+  </div>
+
+  <!-- Search Results Section -->
+  <div class="content" id="content">
+    <ul id="search-results" class="search-results">
+      <!-- Search results will appear here -->
+    </ul>
+  </div>
+
+  <!-- Button to Open about:blank and Load URL -->
+  <div class="button-container">
+    <button class="open-button" onclick="openAboutBlank()">Open about:blank and Load URL</button>
+  </div>
+
+  <!-- The iframe where the URL will be loaded -->
+  <iframe id="aboutBlankIframe"></iframe>
+
+  <!-- about:blank Section -->
+  <div class="aboutblank" id="aboutblank">
+    <div class="show-blank">
+      <p>about:blank</p>
+      <p>This is a blank placeholder page.</p>
+    </div>
+  </div>
+
+  <footer>
+    Proxy Example | Created for Dynamic Pages
+  </footer>
+
+  <script>
+    // Simulate some content for search results
+    const sampleContent = [
+      'Node.js Dockerfile Guide',
+      'Bun.js Setup Instructions',
+      'Proxy Server in Node.js',
+      'Setting up Art Class Dockerfile',
+      'Managing Docker Images for Node.js'
+    ];
+
+    // Perform search and display results
+    function performSearch() {
+      const searchQuery = document.getElementById('search-box').value.toLowerCase();
+      const results = sampleContent.filter(item => item.toLowerCase().includes(searchQuery));
+      const resultsContainer = document.getElementById('search-results');
+      const contentSection = document.getElementById('content');
+      const aboutBlankSection = document.getElementById('aboutblank');
+
+      // Toggle about:blank visibility if no results
+      if (results.length === 0) {
+        contentSection.style.display = 'none';
+        aboutBlankSection.style.display = 'block';
+      } else {
+        contentSection.style.display = 'block';
+        aboutBlankSection.style.display = 'none';
+      }
+
+      // Clear previous results
+      resultsContainer.innerHTML = '';
+
+      // Display results
+      results.forEach(result => {
+        const listItem = document.createElement('li');
+        listItem.textContent = result;
+        resultsContainer.appendChild(listItem);
+      });
+    }
+
+    // Function to open about:blank page and load a URL inside the iframe
+    function openAboutBlank() {
+      // The URL to load in the about:blank iframe
+      const urlToLoad = 'https://www.example.com'; // Replace this URL as needed
+
+      // Get the iframe element
+      const iframe = document.getElementById('aboutBlankIframe');
+
+      // Create an about:blank document and set the URL in it
+      const aboutBlankDoc = iframe.contentWindow.document;
+
+      // Open about:blank in the iframe and load the URL
+      aboutBlankDoc.open();
+      aboutBlankDoc.write('<html><head><title>Loading...</title></head><body><h1>Loading...</h1><iframe src="' + urlToLoad + '" style="width:100%; height:100%; border:none;"></iframe></body></html>');
+      aboutBlankDoc.close();
+    }
+  </script>
+
+</body>
+</html>
