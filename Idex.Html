@@ -41,9 +41,9 @@
                 incognitoTab.document.write(`
                     <html><head><title>Incognito Mode</title>
                     <script>
-                        // Remove all existing content
+                        // Remove all existing content to simulate a fresh blank page
                         document.documentElement.innerHTML = '';
-                        // Disable the address bar
+                        // Disable address bar actions for a true incognito effect
                         Object.defineProperty(window.history, 'pushState', {
                             value: function() { /* do nothing */ }
                         });
@@ -62,12 +62,21 @@
         function search() {
             var searchInput = document.getElementById('searchInput').value;
             var incognitoTab = window.open('about:blank', '_blank');
-            if (incognitoTab && incognitoTab.document) {
+            if (incognitoTab) {
                 // Check if it's a URL or a search query
                 var src = (searchInput.startsWith('http') || searchInput.includes('.')) ? 
                     searchInput : 
                     "https://www.google.com/search?q=" + encodeURIComponent(searchInput);
-                incognitoTab.document.getElementById('proxyFrame').src = src;
+
+                // Set the src to the iframe inside the new tab after it loads
+                incognitoTab.document.write(`
+                    <html>
+                    <head><title>Proxy - Search</title></head>
+                    <body style="margin: 0; padding: 0; overflow: hidden;">
+                        <iframe id="proxyFrame" src="${src}" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe>
+                    </body>
+                    </html>
+                `);
             }
             return false; // Prevent form submission
         }
