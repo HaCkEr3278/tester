@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open New Tab</title>
+    <title>Tab Opener</title>
 </head>
 <body>
-    <h1>Click the button to open a new tab</h1>
-    <button id="openTab">Open New Tab</button>
+    <h1>Tab Opener</h1>
+    <button onclick="openNewTab()">Open New Tab</button>
+    <button onclick="openInAboutBlank()">Open in about:blank</button>
 
     <script>
-        document.getElementById('openTab').addEventListener('click', function() {
+        function openNewTab() {
             window.open('https://example.com', '_blank');
-        });
+        }
+
+        function openInAboutBlank() {
+            var blank = window.open('about:blank', '_blank');
+            blank.document.write('<iframe src="https://example.com" style="width:100%;height:100%;border:none;"></iframe>');
+        }
     </script>
 </body>
 </html>
