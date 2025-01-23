@@ -1,56 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open about:blank, Load Website, and Search</title>
-</head>
-<body>
-    <h1>Open about:blank, Change URL, and Search</h1>
+<script>
+    // Ensure the page is reloaded into about:blank
+    if (window.location.href !== "about:blank") {
+        window.location.replace("about:blank");
+    } else {
+        // Set the content after reloading into about:blank
+        window.location.replace(window.location.href); // Reload the page with the original URL
 
-    <!-- Button to open about:blank -->
-    <button id="openBlankTab">Open about:blank Tab</button>
-    <button id="changeUrl" disabled>Load Website</button>
+        // Refresh logic if needed:
+        setTimeout(function() {
+            location.reload();  // Refresh page after loading
+        }, 1000);
+    }
 
-    <hr>
+    // Get stored passcode from localStorage
+    let currentPasscode = localStorage.getItem('passcode') || 'rsar';
 
-    <!-- Search bar to search on Google -->
-    <input type="text" id="searchQuery" placeholder="Search Google..." />
-    <button id="searchButton">Search</button>
+    const passcodeModal = document.getElementById("passcodeModal");
+    const passcodeInput = document.getElementById("passcodeInput");
+    const passcodeButton = document.getElementById("passcodeButton");
+    const content = document.getElementById("content");
 
-    <script>
-        let newTab = null;
+    // Show content if passcode matches
+    passcodeButton.addEventListener("click", function() {
+        const enteredPasscode = passcodeInput.value;
+        if (enteredPasscode === currentPasscode) {
+            passcodeModal.style.display = "none";
+            content.style.display = "block";
+        } else {
+            alert("Incorrect passcode!");
+        }
+    });
 
-        // Button to open a blank tab
-        document.getElementById("openBlankTab").addEventListener("click", function() {
-            // Open a blank tab
-            newTab = window.open("about:blank", "_blank");
+    // Show the change passcode form
+    const changePasscodeBtn = document.getElementById("changePasscodeBtn");
+    const changePasscodeForm = document.getElementById("changePasscodeForm");
+    changePasscodeBtn.addEventListener("click", function() {
+        changePasscodeForm.style.display = "block";
+    });
 
-            // Wait a little to ensure the new tab is fully opened
-            setTimeout(function() {
-                // Change the content of the blank tab (by setting location or writing HTML)
-                newTab.document.write("<h1>Welcome to the Blank Tab</h1><p>It is now ready to load content.</p>");
-            }, 500);  // Adjust delay if necessary
+    // Handle passcode change
+    const changePasscodeButton = document.getElementById("changePasscodeButton");
+    changePasscodeButton.addEventListener("click", function() {
+        const oldPasscode = document.getElementById("currentPasscodeInput").value;
+        const newPasscode = document.getElementById("newPasscodeInput").value;
+        const message = document.getElementById("changePasscodeMessage");
 
-            // Enable the 'Load Website' button after opening the new tab
-            document.getElementById("changeUrl").disabled = false;
-        });
+        if (oldPasscode === currentPasscode) {
+            currentPasscode = newPasscode;
+            localStorage.setItem('passcode', currentPasscode);
+            message.textContent = "Passcode changed successfully!";
+            setTimeout(() => location.reload(), 1000); // Refresh the page after change
+        } else {
+            message.textContent = "Incorrect old passcode!";
+        }
+    });
 
-        // Button to load a new URL into the blank tab
-        document.getElementById("changeUrl").addEventListener("click", function() {
-            if (newTab) {
-                newTab.location.href = "https://www.example.com"; // Change to your desired URL
+    // Matrix effect
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const columns = canvas.width / 20;
+    const drops = [];
+    for (let x = 0; x < columns; x++) {
+        drops[x] = 0;
+    }
+
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00FF00";
+        ctx.font = "20px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = String.fromCharCode(Math.random() * 128);
+            ctx.fillText(text, i * 20, drops[i] * 20);
+
+            if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
             }
-        });
 
-        // Button to search on Google in a new tab
-        document.getElementById("searchButton").addEventListener("click", function() {
-            const query = document.getElementById("searchQuery").value;
-            if (query) {
-                // Open a new tab with the Google search URL with the entered query
-                window.open("https://www.google.com/search?q=" + encodeURIComponent(query), "_blank");
-            }
-        });
-    </script>
-</body>
-</html>
+            drops[i]++;
+        }
+    }
+
+    setInterval(drawMatrix, 50);
+</script>
