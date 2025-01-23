@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Blank Tab, Load Website, and Search</title>
+    <title>Open about:blank, Load Website, and Search</title>
 </head>
 <body>
     <h1>Open about:blank, Change URL, and Search</h1>
@@ -25,6 +25,12 @@
         document.getElementById("openBlankTab").addEventListener("click", function() {
             // Open a blank tab
             newTab = window.open("about:blank", "_blank");
+
+            // Wait a little to ensure the new tab is fully opened
+            setTimeout(function() {
+                // Change the content of the blank tab (by setting location or writing HTML)
+                newTab.document.write("<h1>Welcome to the Blank Tab</h1><p>It is now ready to load content.</p>");
+            }, 500);  // Adjust delay if necessary
 
             // Enable the 'Load Website' button after opening the new tab
             document.getElementById("changeUrl").disabled = false;
