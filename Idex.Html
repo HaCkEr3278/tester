@@ -1,91 +1,351 @@
-<script>
-    // Ensure the page is reloaded into about:blank
-    if (window.location.href !== "about:blank") {
-        window.location.replace("about:blank");
-    } else {
-        // Set the content after reloading into about:blank
-        window.location.replace(window.location.href); // Reload the page with the original URL
-
-        // Refresh logic if needed:
-        setTimeout(function() {
-            location.reload();  // Refresh page after loading
-        }, 1000);
-    }
-
-    // Get stored passcode from localStorage
-    let currentPasscode = localStorage.getItem('passcode') || 'rsar';
-
-    const passcodeModal = document.getElementById("passcodeModal");
-    const passcodeInput = document.getElementById("passcodeInput");
-    const passcodeButton = document.getElementById("passcodeButton");
-    const content = document.getElementById("content");
-
-    // Show content if passcode matches
-    passcodeButton.addEventListener("click", function() {
-        const enteredPasscode = passcodeInput.value;
-        if (enteredPasscode === currentPasscode) {
-            passcodeModal.style.display = "none";
-            content.style.display = "block";
-        } else {
-            alert("Incorrect passcode!");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo: Hacker Central</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            color: #00ff00;
+            text-align: center;
+            font-size: 18px;
+            overflow-y: scroll;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-    });
 
-    // Show the change passcode form
-    const changePasscodeBtn = document.getElementById("changePasscodeBtn");
-    const changePasscodeForm = document.getElementById("changePasscodeForm");
-    changePasscodeBtn.addEventListener("click", function() {
-        changePasscodeForm.style.display = "block";
-    });
-
-    // Handle passcode change
-    const changePasscodeButton = document.getElementById("changePasscodeButton");
-    changePasscodeButton.addEventListener("click", function() {
-        const oldPasscode = document.getElementById("currentPasscodeInput").value;
-        const newPasscode = document.getElementById("newPasscodeInput").value;
-        const message = document.getElementById("changePasscodeMessage");
-
-        if (oldPasscode === currentPasscode) {
-            currentPasscode = newPasscode;
-            localStorage.setItem('passcode', currentPasscode);
-            message.textContent = "Passcode changed successfully!";
-            setTimeout(() => location.reload(), 1000); // Refresh the page after change
-        } else {
-            message.textContent = "Incorrect old passcode!";
+        #content {
+            padding-top: 100px;
+            flex-grow: 1;
+            display: none; /* Hide the content initially */
         }
-    });
 
-    // Matrix effect
-    const canvas = document.getElementById("matrixCanvas");
-    const ctx = canvas.getContext("2d");
+        /* Glitch text effect for title */
+        .glitch {
+            font-size: 80px;
+            color: #00ff00;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            text-transform: uppercase;
+        }
 
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+        .glitch::before,
+        .glitch::after {
+            content: "Echo";
+            position: absolute;
+            top: 0;
+            left: 0;
+            text-shadow: 2px 0 red, -2px 0 blue, 0 2px green, 0 -2px yellow;
+            clip-path: inset(0 0 0 0);
+            animation: glitch-anim 1s infinite linear alternate-reverse;
+        }
 
-    const columns = canvas.width / 20;
-    const drops = [];
-    for (let x = 0; x < columns; x++) {
-        drops[x] = 0;
-    }
+        .glitch::after {
+            left: 2px;
+            text-shadow: -2px 0 blue, 2px 0 red, 0 2px yellow, 0 -2px green;
+            animation: glitch-anim 1s infinite linear alternate-reverse;
+        }
 
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#00FF00";
-        ctx.font = "20px monospace";
-
-        for (let i = 0; i < drops.length; i++) {
-            const text = String.fromCharCode(Math.random() * 128);
-            ctx.fillText(text, i * 20, drops[i] * 20);
-
-            if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0;
+        @keyframes glitch-anim {
+            0% {
+                clip-path: inset(0 0 0 0);
             }
-
-            drops[i]++;
+            50% {
+                clip-path: inset(0 0 0 10px);
+            }
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
         }
-    }
 
-    setInterval(drawMatrix, 50);
-</script>
+        /* Passcode modal */
+        #passcodeModal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+        }
+
+        #passcodeBox {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 2px solid #00ff00;
+            text-align: center;
+            color: #00ff00;
+        }
+
+        #passcodeInput {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 20px;
+            font-size: 18px;
+            width: 200px;
+        }
+
+        #passcodeButton {
+            background-color: #00ff00;
+            border: none;
+            padding: 10px 20px;
+            color: #0a0a0a;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #passcodeButton:hover {
+            background-color: #00cc00;
+        }
+
+        /* Matrix effect */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .gps-container {
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .gps-section {
+            margin-bottom: 40px;
+        }
+
+        .gps-section {
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-header {
+            font-size: 28px;
+            color: #00ff00;
+            text-align: center;
+            margin-top: 40px;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-decoration: underline;
+        }
+
+        .section-content {
+            text-align: left;
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        footer {
+            font-size: 18px;
+            color: #aaa;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background-color: #141414;
+            padding: 10px 0;
+            z-index: 10;
+        }
+
+        /* Passcode change form */
+        #changePasscodeForm {
+            display: none;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            text-align: center;
+        }
+
+        #changePasscodeInput {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px;
+            font-size: 18px;
+            width: 200px;
+        }
+
+        #changePasscodeButton {
+            background-color: #00ff00;
+            border: none;
+            padding: 10px 20px;
+            color: #0a0a0a;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #changePasscodeButton:hover {
+            background-color: #00cc00;
+        }
+
+        /* Link Styles */
+        a {
+            color: #00ff00;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Passcode Modal -->
+    <div id="passcodeModal">
+        <div id="passcodeBox">
+            <h2>Enter Passcode</h2>
+            <input type="password" id="passcodeInput" placeholder="Enter Passcode">
+            <br>
+            <button id="passcodeButton">Submit</button>
+        </div>
+    </div>
+
+    <!-- Canvas for Matrix effect -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- Main content that will be shown after passcode -->
+    <div id="content">
+        <h1 class="glitch">Echo</h1>
+        <button id="changePasscodeBtn">Change Passcode</button>
+
+        <div id="changePasscodeForm">
+            <h2>Change Passcode</h2>
+            <input type="password" id="currentPasscodeInput" placeholder="Enter Current Passcode">
+            <br>
+            <input type="password" id="newPasscodeInput" placeholder="Enter New Passcode">
+            <br>
+            <button id="changePasscodeButton">Submit New Passcode</button>
+            <p id="changePasscodeMessage"></p>
+        </div>
+
+        <div class="gps-container">
+            <!-- Games Section -->
+            <div class="gps-section">
+                <div class="section-header">Games</div>
+                <div class="section-content">
+                    <ul id="gameList">
+                        <li><a href="https://www.decisionproblem.com/paperclips/index2.html" target="_blank">Paperclips Game</a></li>
+                        <li><a href="https://testtubegames.com/bondbreaker3.html" target="_blank">Bond Breaker 3</a></li>
+                        <li><a href="https://www.culinaryschools.org/kids-games/watermelon-game/" target="_blank">Watermelon Game</a></li>
+                        <li><a href="https://ellisonleao.github.io/clumsy-bird/" target="_blank">Clumsy Bird</a></li>
+                        <li><a href="https://codeincomplete.com/games/racer/" target="_blank">Racer Game</a></li>
+                        <li><a href="https://lrq3000.github.io/javascript-racer/v4.final.html" target="_blank">JavaScript Racer V4</a></li>
+                        <li><a href="https://lrq3000.github.io/javascript-racer/v5.game.html" target="_blank">JavaScript Racer V5</a></li>
+                        <li><a href="https://pilarv2.github.io/flight/game.html" target="_blank">Flight Game</a></li>
+                        <li><a href="https://superdevresources.com/open-source-html5-games/#:~:text=Full%20Game%20Source%20with%20Game%20Assets%20%28Premium%29%201,5%205.%20Neon%20Bricks%20%E2%80%93%20HTML5%20Game%" target="_blank">Neon Bricks</a></li>
+                        <li><a href="https://firespread01.github.io/" target="_blank">Fire Spread Game</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>Made By V&Z</footer>
+
+    <script>
+        // Get stored passcode from localStorage
+        let currentPasscode = localStorage.getItem('passcode') || 'rsar';
+
+        const passcodeModal = document.getElementById("passcodeModal");
+        const passcodeInput = document.getElementById("passcodeInput");
+        const passcodeButton = document.getElementById("passcodeButton");
+        const content = document.getElementById("content");
+
+        // Show content if passcode matches
+        passcodeButton.addEventListener("click", function() {
+            const enteredPasscode = passcodeInput.value;
+            if (enteredPasscode === currentPasscode) {
+                passcodeModal.style.display = "none";
+                content.style.display = "block";
+            } else {
+                alert("Incorrect passcode!");
+            }
+        });
+
+        // Show the change passcode form
+        const changePasscodeBtn = document.getElementById("changePasscodeBtn");
+        const changePasscodeForm = document.getElementById("changePasscodeForm");
+        changePasscodeBtn.addEventListener("click", function() {
+            changePasscodeForm.style.display = "block";
+        });
+
+        // Handle passcode change
+        const changePasscodeButton = document.getElementById("changePasscodeButton");
+        changePasscodeButton.addEventListener("click", function() {
+            const oldPasscode = document.getElementById("currentPasscodeInput").value;
+            const newPasscode = document.getElementById("newPasscodeInput").value;
+            const message = document.getElementById("changePasscodeMessage");
+
+            if (oldPasscode === currentPasscode) {
+                currentPasscode = newPasscode;
+                localStorage.setItem('passcode', currentPasscode);
+                message.textContent = "Passcode changed successfully!";
+                setTimeout(() => location.reload(), 1000); // Refresh the page after change
+            } else {
+                message.textContent = "Incorrect old passcode!";
+            }
+        });
+
+        // Matrix effect
+        const canvas = document.getElementById("matrixCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        const columns = canvas.width / 20;
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 0;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#00FF00";
+            ctx.font = "20px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = String.fromCharCode(Math.random() * 128);
+                ctx.fillText(text, i * 20, drops[i] * 20);
+
+                if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+    </script>
+</body>
+</html>
