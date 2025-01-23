@@ -3,22 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tab Opener</title>
+    <title>Open Blank Tab, Load Website, and Search</title>
 </head>
 <body>
-    <h1>Tab Opener</h1>
-    <button onclick="openNewTab()">Open New Tab</button>
-    <button onclick="openInAboutBlank()">Open in about:blank</button>
+    <h1>Open about:blank, Change URL, and Search</h1>
+
+    <!-- Button to open about:blank -->
+    <button id="openBlankTab">Open about:blank Tab</button>
+    <button id="changeUrl" disabled>Load Website</button>
+
+    <hr>
+
+    <!-- Search bar to search on Google -->
+    <input type="text" id="searchQuery" placeholder="Search Google..." />
+    <button id="searchButton">Search</button>
 
     <script>
-        function openNewTab() {
-            window.open('https://example.com', '_blank');
-        }
+        let newTab = null;
 
-        function openInAboutBlank() {
-            var blank = window.open('about:blank', '_blank');
-            blank.document.write('<iframe src="https://example.com" style="width:100%;height:100%;border:none;"></iframe>');
-        }
+        // Button to open a blank tab
+        document.getElementById("openBlankTab").addEventListener("click", function() {
+            // Open a blank tab
+            newTab = window.open("about:blank", "_blank");
+
+            // Enable the 'Load Website' button after opening the new tab
+            document.getElementById("changeUrl").disabled = false;
+        });
+
+        // Button to load a new URL into the blank tab
+        document.getElementById("changeUrl").addEventListener("click", function() {
+            if (newTab) {
+                newTab.location.href = "https://www.example.com"; // Change to your desired URL
+            }
+        });
+
+        // Button to search on Google in a new tab
+        document.getElementById("searchButton").addEventListener("click", function() {
+            const query = document.getElementById("searchQuery").value;
+            if (query) {
+                // Open a new tab with the Google search URL with the entered query
+                window.open("https://www.google.com/search?q=" + encodeURIComponent(query), "_blank");
+            }
+        });
     </script>
 </body>
 </html>
